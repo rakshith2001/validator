@@ -16,18 +16,24 @@ export async function POST(request: NextRequest) {
 
   // Validate email with AbstractAPI
   const apiKey = process.env.ABSTRACT_API_KEY;
-  const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${email}`);
-  const data: EmailValidationResponse = await response.json();
+  try {
+    const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${email}`);
+    const data: EmailValidationResponse = await response.json();
 
-  if (data.deliverability === 'DELIVERABLE') {
-    // Add the email to the database
-    try {
-      await createEmail(email);
-      return NextResponse.json({ message: 'Email is valid✔️' });
-    } catch (error) {
-      return NextResponse.json({ message: 'Email is valid ✔️' });
+    if (data.deliverability === 'DELIVERABLE') {
+      // Add the email to the database
+      try {
+        await createEmail(email);
+        return NextResponse.json({ message: 'Email is valid✔️' });
+      } catch (error) {
+        console.error('Database error:', error);
+        return NextResponse.json({ message: 'Email is valid ✔️' });
+      }
+    } else {
+      return NextResponse.json({ message: 'Email is invalid ❌' }, { status: 400 });
     }
-  } else {
-    return NextResponse.json({ message: 'Email is invalid ❌' }, { status: 400 });
+  } catch (error) {
+    console.error('Error validating email:', error);
+    return NextResponse.json({ message: 'Error validating email' }, { status: 500 });
   }
 }

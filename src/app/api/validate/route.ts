@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createEmail } from "@/app/lib/actions/email.action";
 
+
 interface EmailValidationResponse {
   deliverability: string;
 }
@@ -31,3 +32,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ message: 'Email is invalid ❌' }, { status: 400 });
   }
 }
+
+export async function handler(request: NextRequest) {
+  if (request.method === 'POST') {
+    return POST(request);
+  } else {
+    return new NextResponse('Method Not Allowed', { status: 405, headers: { Allow: 'POST' } });
+  }
+}
+
+export { handler as default };

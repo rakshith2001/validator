@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import { FaTwitter } from 'react-icons/fa'; // Import the Twitter icon
 
 const Home = () => {
   const [email, setEmail] = useState<string>('');
@@ -51,6 +52,18 @@ const Home = () => {
           </button>
         </form>
         {message && <p className='text-white mt-6 text-lg md:text-xl lg:text-2xl'>{message}</p>}
+      </div>
+      <div className='mt-12 text-center'>
+        <p className='text-white text-lg md:text-xl lg:text-2xl'>Feel free to follow :)</p>
+        <a
+          href='https://x.com/RakshithR20012'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='flex items-center justify-center text-red-500 text-lg md:text-xl lg:text-2xl hover:underline'
+        >
+          <FaTwitter className='mr-2 h-6 w-6 md:h-8 md:w-8 lg:h-10 lg:w-10 text-white mt-4' /> 
+          
+        </a>
       </div>
     </main>
   );

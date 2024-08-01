@@ -11,16 +11,32 @@ const Home = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const response = await fetch('/api/validate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-    });
-    const data = await response.json();
-    setMessage(data.message);
-    setLoading(false);
+
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_ABSTRACT_API_KEY;
+      const response = await fetch(`https://emailvalidation.abstractapi.com/v1/?api_key=${apiKey}&email=${email}`);
+      const data = await response.json();
+
+      if (data.deliverability === 'DELIVERABLE') {
+        // Call the backend to store the email
+        const backendResponse = await fetch('/api/validate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+
+        const backendData = await backendResponse.json();
+        setMessage(backendData.message);
+      } else {
+        setMessage('Email is invalid ❌');
+      }
+    } catch (error) {
+      setMessage('Error validating email');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
